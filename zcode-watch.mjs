@@ -2,7 +2,7 @@
  * ZCode 放量监控（长跑）
  *
  * 设计原则：**像人不像机器人**
- *   - 默认 30 分钟一次，带 ±20% 随机抖动（不是精确周期）
+ *   - 默认 1 小时一次，带 ±15% 随机抖动（不是精确周期）
  *   - 只打 preview/event（无 captcha，不耗阿里云设备配额）
  *   - 哨兵端点探测每天只做 2 次（不是每轮都扫）
  *
@@ -11,8 +11,8 @@
  *   - preview 每 5 分钟 = 288 次/天，行为模式过于规律，有 3012 风控风险
  *
  * 用法：
- *   node zcode-watch.mjs                 # 默认 30min，跑 3 天
- *   EVERY_MS=600000 node zcode-watch.mjs # 10 分钟
+ *   node zcode-watch.mjs                  # 默认 60min，跑 3 天
+ *   EVERY_MS=1800000 node zcode-watch.mjs # 30 分钟
  *   MAX_MS=86400000 node zcode-watch.mjs # 只跑 1 天
  */
 import fs from 'node:fs'
@@ -31,9 +31,9 @@ const H = (x = {}) => ({
   Authorization: `Bearer ${c.jwt}`, ...x,
 })
 
-// 默认 30 分钟 + 抖动
-const BASE = Number(process.env.EVERY_MS || 1800000)
-const JITTER = Number(process.env.JITTER_PCT || 20) / 100
+// 默认 1 小时 + 抖动
+const BASE = Number(process.env.EVERY_MS || 3600000)
+const JITTER = Number(process.env.JITTER_PCT || 15) / 100
 const MAX = Number(process.env.MAX_MS || 259200000)  // 3 天
 // 哨兵每天只探 2 次（放在 12:00 与 20:00 附近）
 const SENTINELS = [
