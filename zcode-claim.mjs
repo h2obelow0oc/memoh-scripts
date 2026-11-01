@@ -61,6 +61,7 @@ function headers(cred, extra = {}) {
     'X-Platform': 'win32',
     'X-Os-Category': 'windows',
     'anthropic-version': '2023-06-01',
+    Authorization: `Bearer ${cred.jwt}`,
     ...extra,
   }
   return h
